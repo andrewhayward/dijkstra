@@ -78,9 +78,42 @@ var Graph = (function (undefined) {
 		return nodes;
 	}
 
-	var findShortestPath = function (map, start, end) {
-		var predecessors = findPaths(map, start, end);
-		return predecessors ? extractShortest(predecessors, end) : null;
+	var findShortestPath = function (map, nodes) {
+		var start = nodes.shift(),
+		    end,
+		    predecessors,
+		    path = [],
+		    shortest;
+
+		while (nodes.length) {
+			end = nodes.shift();
+			predecessors = findPaths(map, start, end);
+
+			if (predecessors) {
+				shortest = extractShortest(predecessors, end);
+				if (nodes.length) {
+					path.push.apply(path, shortest.slice(0, -1));
+				} else {
+					return path.concat(shortest);
+				}
+			} else {
+				return null;
+			}
+
+			start = end;
+		}
+	}
+
+	var toArray = function (list, offset) {
+		try {
+			return Array.prototype.slice.call(list, offset);
+		} catch (e) {
+			var a = [];
+			for (var i = offset || 0, l = list.length; i < l; ++i) {
+				a.push(list[i]);
+			}
+			return a;
+		}
 	}
 
 	var Graph = function (map) {
@@ -88,10 +121,24 @@ var Graph = (function (undefined) {
 	}
 
 	Graph.prototype.findShortestPath = function (start, end) {
-	    return findShortestPath(this.map, start, end);
+		if (Object.prototype.toString.call(start) === '[object Array]') {
+			return findShortestPath(this.map, start);
+		} else if (arguments.length === 2) {
+			return findShortestPath(this.map, [start, end]);
+		} else {
+			return findShortestPath(this.map, toArray(arguments));
+		}
 	}
 
-    Graph.findShortestPath = findShortestPath;
+	Graph.findShortestPath = function (map, start, end) {
+		if (Object.prototype.toString.call(start) === '[object Array]') {
+			return findShortestPath(map, start);
+		} else if (arguments.length === 3) {
+			return findShortestPath(map, [start, end]);
+		} else {
+			return findShortestPath(map, toArray(arguments, 1));
+		}
+	}
 
 	return Graph;
 
