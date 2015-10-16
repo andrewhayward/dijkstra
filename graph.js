@@ -70,7 +70,6 @@ var Graph = (function (undefined) {
 
 		while (u) {
 			nodes.push(u);
-			predecessor = predecessors[u];
 			u = predecessors[u];
 		}
 
