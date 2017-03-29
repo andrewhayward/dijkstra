@@ -68,7 +68,7 @@ var Graph = (function (undefined) {
 		var nodes = [],
 		    u = end;
 
-		while (u) {
+		while (u !== undefined) {
 			nodes.push(u);
 			u = predecessors[u];
 		}
