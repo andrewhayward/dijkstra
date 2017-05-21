@@ -8,8 +8,17 @@ var Graph = (function (undefined) {
 		return keys;
 	}
 
+	function isFunction(functionToCheck) {
+		var getType = {};
+		return functionToCheck && getType.toString.call(functionToCheck) === '[object Function]';
+	}
+
+	function getWeight(value){
+		return isFunction (value) ? value() : parseFloat (value);
+	}
+
 	var sorter = function (a, b) {
-		return parseFloat (a) - parseFloat (b);
+		return getWeight(a) - getWeight(b);
 	}
 
 	var findPaths = function (map, start, end, infinity) {
@@ -36,14 +45,14 @@ var Graph = (function (undefined) {
 			var key = keys[0],
 			    bucket = open[key],
 			    node = bucket.shift(),
-			    currentCost = parseFloat(key),
+			    currentCost = getWeight(key),
 			    adjacentNodes = map[node] || {};
 
 			if (!bucket.length) delete open[key];
 
 			for (var vertex in adjacentNodes) {
 			    if (Object.prototype.hasOwnProperty.call(adjacentNodes, vertex)) {
-					var cost = adjacentNodes[vertex],
+					var cost = getWeight(adjacentNodes[vertex]),
 					    totalCost = cost + currentCost,
 					    vertexCost = costs[vertex];
 
