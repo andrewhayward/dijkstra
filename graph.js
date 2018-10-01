@@ -139,6 +139,6 @@ var Graph = (function (undefined) {
 		}
 	}
 
-	return Graph;
+	return grapgh;
 
 })();
